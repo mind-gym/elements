@@ -1,5 +1,5 @@
 module MG.Colours exposing
-    ( colours
+    ( Colours, colours
     , Gradient, gradients, backgroundGradient
     , externalColourDefinitions
     )
@@ -9,7 +9,7 @@ module MG.Colours exposing
 
 # Solid colours
 
-@docs colours
+@docs Colours, colours
 
 
 # Gradients
@@ -30,9 +30,9 @@ import Svg
 import Svg.Attributes as SvgAt
 
 
-{-| Colours used throughout MindGym's styleguide.
+{-| All of the available colours
 -}
-colours :
+type alias Colours =
     { transparent : Color
     , white : Color
     , gradientGreen : List Color
@@ -99,6 +99,11 @@ colours :
     , black100 : Color
     , greyscale300 : Color
     }
+
+
+{-| Colours used throughout MindGym's styleguide.
+-}
+colours : Colours
 colours =
     { transparent = rgba255 0 0 0 0
     , white = rgb255 0xFF 0xFF 0xFF
