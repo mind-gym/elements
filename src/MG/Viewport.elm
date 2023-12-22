@@ -3,7 +3,12 @@ module MG.Viewport exposing
     , classify, classifyDefault360
     )
 
-{-| How layouts work horizontally.
+{-|
+
+
+# Viewport
+
+How layouts work horizontally.
 
 | Margin | Column | Gutter | Column | Gutter | ... | Gutter | Column | Margin |
 
