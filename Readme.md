@@ -10,3 +10,18 @@ Everything here is namespaced under MG to avoid conflicts with other common name
 
 Contains the various colours used in MindGym's styleguide. Hope you enjoy green!
 
+### Attributes 
+
+Contains attributes that can be added to Elm UI elements for various effects.
+
+### Input
+
+Contains various input controls.
+
+### Typography
+
+Contains font-related attribute styles.
+
+### Viewport 
+
+Contains the Viewport type and ways to manage layouts for different viewport widths.
