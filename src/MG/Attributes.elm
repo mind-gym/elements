@@ -9,7 +9,7 @@ module MG.Attributes exposing
 
 # Style-specific
 
-@docs style, transition
+@docs transition
 
 
 # Testing
@@ -29,8 +29,6 @@ import Html.Events
 import Json.Decode as Decode
 
 
-{-| Add any property to any element in Elm-UI
--}
 style : { property : String, value : String } -> Attribute msg
 style { property, value } =
     htmlAttribute <| Attr.style property value
