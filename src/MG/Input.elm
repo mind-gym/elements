@@ -59,6 +59,8 @@ placeholder { viewport, fieldIsFocused, fieldHasValue, str } =
             text str
 
 
+{-| Common email field with animated placeholder
+-}
 email :
     { onChange : String -> msg
     , value : String
@@ -193,11 +195,15 @@ button buttonType { msg, labelText, testId } =
         }
 
 
+{-| Common primary button
+-}
 primaryButton : ButtonParams msg -> Element msg
 primaryButton =
     button Primary
 
 
+{-| Common secondary button
+-}
 secondaryButton : ButtonParams msg -> Element msg
 secondaryButton =
     button <| Secondary { transparent = False }
