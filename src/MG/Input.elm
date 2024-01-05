@@ -1,5 +1,5 @@
 module MG.Input exposing
-    ( enabledEmail, disabledEmail
+    ( enabledEmail, disabledEmail, password
     , primaryButton, secondaryButton
     )
 
@@ -8,7 +8,7 @@ module MG.Input exposing
 
 # Input fields
 
-@docs enabledEmail, disabledEmail
+@docs enabledEmail, disabledEmail, password
 
 
 # Controls
@@ -22,8 +22,10 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Html.Events exposing (onSubmit)
 import MG.Attributes as Attributes
 import MG.Colours exposing (colours)
+import MG.Icons as Icons
 import MG.Typography as Typography
 import MG.Viewport exposing (Viewport)
 
@@ -81,26 +83,43 @@ type alias EnabledEmailParams msg =
     }
 
 
+baseFieldAttrs : Maybe msg -> Viewport -> List (Element.Attribute msg)
+baseFieldAttrs onSubmit viewport =
+    [ Background.color colours.black700
+    , Border.rounded 10
+    , Border.width 1
+    , padding 18
+    ]
+        ++ (case onSubmit of
+                Just submitMsg ->
+                    [ Attributes.onEnter submitMsg ]
+
+                Nothing ->
+                    []
+           )
+        ++ Typography.bodyS.regular viewport
+
+
+insetButtonStyles : List (Attribute msg)
+insetButtonStyles =
+    [ alignRight
+    , centerY
+    , Background.color colours.black700
+    , Font.size 14
+    , Font.color colours.white
+    , height fill
+    , paddingXY 18 0
+    , Border.rounded 10
+    , mouseOver
+        [ Font.color colours.black200
+        ]
+    ]
+
+
 email :
     EmailField msg
     -> Element msg
 email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
-    let
-        baseAttrs =
-            [ Background.color colours.black700
-            , Border.rounded 10
-            , Border.width 1
-            , paddingXY 18 20
-            ]
-                ++ (case onSubmit of
-                        Just submitMsg ->
-                            [ Attributes.onEnter submitMsg ]
-
-                        Nothing ->
-                            []
-                   )
-                ++ Typography.bodyS.regular viewport
-    in
     case emailType of
         Enabled { errorStr, onChange, onEnter } ->
             let
@@ -135,7 +154,7 @@ email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
                 , spacing 10
                 ]
                 [ Input.email
-                    (baseAttrs
+                    (baseFieldAttrs onSubmit viewport
                         ++ specificStyles
                     )
                     { label = Input.labelHidden "Your email address"
@@ -172,24 +191,14 @@ email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
                             colours.black700
                     , inFront <|
                         Input.button
-                            [ alignRight
-                            , centerY
-                            , Background.color colours.black700
-                            , Font.size 14
-                            , Font.color colours.white
-                            , padding 20
-                            , Border.rounded 10
-                            , mouseOver
-                                [ Font.color colours.black200
-                                ]
-                            ]
+                            insetButtonStyles
                             { label = text "Change"
                             , onPress = onSubmit
                             }
                     ]
             in
             row
-                (baseAttrs
+                (baseFieldAttrs onSubmit viewport
                     ++ specificStyles
                 )
                 [ el [] <| text value
@@ -242,6 +251,62 @@ disabledEmail { value, enableMsg, viewport, isFocused } =
             , isFocused = isFocused
             }
             Disabled
+
+
+{-| Common email field with animated placeholder and show/hide button.
+-}
+password :
+    { onChange : String -> msg
+    , value : String
+    , showValue : Bool
+    , togglePasswordVisibility : Bool -> msg
+    , viewport : Viewport
+    , onSubmit : Maybe msg
+    , isFocused : Bool
+    }
+    -> Element msg
+password { onChange, value, showValue, onSubmit, viewport, isFocused, togglePasswordVisibility } =
+    Input.currentPassword
+        ([ Border.color <|
+            if isFocused then
+                colours.green
+
+            else
+                colours.black700
+         , placeholder
+            { viewport = viewport
+            , fieldIsFocused = isFocused
+            , fieldHasValue = not <| String.isEmpty value
+            , str = "Your password"
+            }
+         , inFront <|
+            Input.button
+                insetButtonStyles
+                { label =
+                    row [ spacing 6 ] <|
+                        if showValue then
+                            [ el [] <| text "Hide"
+                            , el [] <| Icons.hide 20
+                            ]
+
+                        else
+                            [ el [] <| text "Show"
+                            , el [] <| Icons.show 20
+                            ]
+                , onPress =
+                    Just <|
+                        togglePasswordVisibility <|
+                            not showValue
+                }
+         ]
+            ++ baseFieldAttrs onSubmit viewport
+        )
+        { label = Input.labelHidden "Your password"
+        , onChange = onChange
+        , placeholder = Nothing
+        , text = value
+        , show = showValue
+        }
 
 
 type Button
