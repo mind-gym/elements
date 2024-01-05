@@ -77,6 +77,7 @@ type EmailType msg
 type alias EnabledEmailParams msg =
     { onChange : String -> msg
     , errorStr : Maybe String
+    , onEnter : msg
     }
 
 
@@ -101,13 +102,14 @@ email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
                 ++ Typography.bodyS.regular viewport
     in
     case emailType of
-        Enabled { errorStr, onChange } ->
+        Enabled { errorStr, onChange, onEnter } ->
             let
                 errorColour =
                     colours.red500
 
                 specificStyles =
-                    [ Background.color colours.black700
+                    [ Attributes.onEnter onEnter
+                    , Background.color colours.black700
                     , width fill
                     , Border.color <|
                         case errorStr of
@@ -198,6 +200,7 @@ email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
 -}
 enabledEmail :
     { onChange : String -> msg
+    , onEnter : msg
     , value : String
     , errorStr : Maybe String
     , onSubmit : Maybe msg
@@ -205,7 +208,7 @@ enabledEmail :
     , viewport : Viewport
     }
     -> Element msg
-enabledEmail { onChange, value, errorStr, onSubmit, isFocused, viewport } =
+enabledEmail { onChange, value, errorStr, onEnter, onSubmit, isFocused, viewport } =
     email <|
         EmailField
             { viewport = viewport
@@ -216,6 +219,7 @@ enabledEmail { onChange, value, errorStr, onSubmit, isFocused, viewport } =
             (Enabled
                 { onChange = onChange
                 , errorStr = errorStr
+                , onEnter = onEnter
                 }
             )
 
