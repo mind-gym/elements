@@ -14,9 +14,17 @@ Contains the various colours used in MindGym's styleguide. Hope you enjoy green!
 
 Contains attributes that can be added to Elm UI elements for various effects.
 
+### Icons
+
+Contains various icons.
+
 ### Input
 
 Contains various input controls.
+
+### Navigation
+
+Contains elements for navigation, such as links.
 
 ### Typography
 
