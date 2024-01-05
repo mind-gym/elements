@@ -1,5 +1,5 @@
 module MG.Input exposing
-    ( email
+    ( enabledEmail, disabledEmail
     , primaryButton, secondaryButton
     )
 
@@ -8,7 +8,7 @@ module MG.Input exposing
 
 # Input fields
 
-@docs email
+@docs enabledEmail, disabledEmail
 
 
 # Controls
@@ -48,51 +48,68 @@ placeholder { viewport, fieldIsFocused, fieldHasValue, str } =
                             || fieldHasValue
                     then
                         [ scale 0.7
-                        , moveLeft 21
+                        , moveLeft 22
                         ]
 
                     else
-                        [ moveDown 14 ]
+                        [ moveDown 20 ]
                    )
             )
         <|
             text str
 
 
-{-| Common email field with animated placeholder
--}
-email :
+type EmailField msg
+    = EmailField
+        { viewport : Viewport
+        , value : String
+        , onSubmit : Maybe msg
+        , isFocused : Bool
+        }
+        (EmailType msg)
+
+
+type EmailType msg
+    = Enabled (EnabledEmailParams msg)
+    | Disabled
+
+
+type alias EnabledEmailParams msg =
     { onChange : String -> msg
-    , value : String
     , errorStr : Maybe String
-    , onSubmit : Maybe msg
-    , isFocused : Bool
-    , viewport : Viewport
     }
+
+
+email :
+    EmailField msg
     -> Element msg
-email { value, errorStr, onSubmit, onChange, isFocused, viewport } =
+email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
     let
         baseAttrs =
-            case onSubmit of
-                Just submitMsg ->
-                    [ Attributes.onEnter submitMsg ]
+            [ Background.color colours.black700
+            , Border.rounded 10
+            , Border.width 1
+            , paddingXY 18 20
+            ]
+                ++ (case onSubmit of
+                        Just submitMsg ->
+                            [ Attributes.onEnter submitMsg ]
 
-                Nothing ->
-                    []
-
-        errorColour =
-            colours.red500
+                        Nothing ->
+                            []
+                   )
+                ++ Typography.bodyS.regular viewport
     in
-    column
-        [ width fill
-        , spacing 10
-        ]
-        [ Input.email
-            (baseAttrs
-                ++ [ Background.color colours.black700
-                   , Border.rounded 10
-                   , Border.width 1
-                   , Border.color <|
+    case emailType of
+        Enabled { errorStr, onChange } ->
+            let
+                errorColour =
+                    colours.red500
+
+                specificStyles =
+                    [ Background.color colours.black700
+                    , width fill
+                    , Border.color <|
                         case errorStr of
                             Just _ ->
                                 errorColour
@@ -103,30 +120,124 @@ email { value, errorStr, onSubmit, onChange, isFocused, viewport } =
 
                                 else
                                     colours.black700
-                   , paddingXY 20 16
-                   , Font.size 14
-                   , placeholder
+                    , placeholder
                         { viewport = viewport
                         , fieldIsFocused = isFocused
                         , fieldHasValue = not <| String.isEmpty value
                         , str = "Your email address"
                         }
-                   ]
-            )
-            { label = Input.labelHidden "Your email address"
-            , onChange = onChange
-            , placeholder = Nothing
-            , text = value
-            }
-        , el [ height <| px 20 ] <|
-            case errorStr of
-                Nothing ->
-                    none
+                    ]
+            in
+            column
+                [ width fill
+                , spacing 10
+                ]
+                [ Input.email
+                    (baseAttrs
+                        ++ specificStyles
+                    )
+                    { label = Input.labelHidden "Your email address"
+                    , onChange = onChange
+                    , placeholder = Nothing
+                    , text = value
+                    }
+                , el [ height <| px 20 ] <|
+                    case errorStr of
+                        Nothing ->
+                            none
 
-                Just str ->
-                    el (Font.color errorColour :: Typography.noteS.regular viewport) <|
-                        text str
-        ]
+                        Just str ->
+                            el (Font.color errorColour :: Typography.noteS.regular viewport) <|
+                                text str
+                ]
+
+        Disabled ->
+            let
+                specificStyles =
+                    [ width fill
+                    , placeholder
+                        { viewport = viewport
+                        , fieldIsFocused = isFocused
+                        , fieldHasValue = True
+                        , str = "Your email address"
+                        }
+                    , Font.color colours.black300
+                    , Border.color <|
+                        if isFocused then
+                            colours.green
+
+                        else
+                            colours.black700
+                    , inFront <|
+                        Input.button
+                            [ alignRight
+                            , centerY
+                            , Background.color colours.black700
+                            , Font.size 14
+                            , Font.color colours.white
+                            , padding 20
+                            , Border.rounded 10
+                            , mouseOver
+                                [ Font.color colours.black200
+                                ]
+                            ]
+                            { label = text "Change"
+                            , onPress = onSubmit
+                            }
+                    ]
+            in
+            row
+                (baseAttrs
+                    ++ specificStyles
+                )
+                [ el [] <| text value
+                ]
+
+
+{-| Common email field with animated placeholder
+-}
+enabledEmail :
+    { onChange : String -> msg
+    , value : String
+    , errorStr : Maybe String
+    , onSubmit : Maybe msg
+    , isFocused : Bool
+    , viewport : Viewport
+    }
+    -> Element msg
+enabledEmail { onChange, value, errorStr, onSubmit, isFocused, viewport } =
+    email <|
+        EmailField
+            { viewport = viewport
+            , value = value
+            , onSubmit = onSubmit
+            , isFocused = isFocused
+            }
+            (Enabled
+                { onChange = onChange
+                , errorStr = errorStr
+                }
+            )
+
+
+{-| An element that looks like an input field, but is disabled and contains a button to change the value. For use when a user has already entered their email address. `value` is a (Char, String) to ensure that this element can not be created with an empty value.
+-}
+disabledEmail :
+    { value : ( Char, String )
+    , enableMsg : msg
+    , viewport : Viewport
+    , isFocused : Bool
+    }
+    -> Element msg
+disabledEmail { value, enableMsg, viewport, isFocused } =
+    email <|
+        EmailField
+            { viewport = viewport
+            , value = String.fromChar (Tuple.first value) ++ Tuple.second value
+            , onSubmit = Just enableMsg
+            , isFocused = isFocused
+            }
+            Disabled
 
 
 type Button
