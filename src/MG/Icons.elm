@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow
+@docs show, hide, rightArrow, leftArrow, warning, success
 
 -}
 
@@ -43,3 +43,15 @@ rightArrow =
 leftArrow : Int -> Element msg
 leftArrow =
     icon Icons.arrow_back
+
+
+{-| -}
+warning : Int -> Element msg
+warning =
+    icon Icons.warning_amber
+
+
+{-| -}
+success : Int -> Element msg
+success =
+    icon Icons.check_circle
