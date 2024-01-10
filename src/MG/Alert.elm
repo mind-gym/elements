@@ -89,10 +89,8 @@ view viewport (Alert { content } alertType) =
             ]
 
 
-{-|
-
-    Because we generally expect alerts to be displayed conditionally, this function takes a `Maybe Alert`. If the value is `Nothing`, then no alert is rendered.
-
+{-| Because we generally expect alerts to be displayed conditionally, this function takes a `Maybe Alert`.
+If the value is `Nothing`, then no alert is rendered.
 -}
 render : Viewport -> Maybe Alert -> Element msg
 render viewport maybeAlert =
