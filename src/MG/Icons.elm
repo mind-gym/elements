@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow, warning, success
+@docs show, hide, rightArrow, leftArrow, warning, success, logOut
 
 -}
 
@@ -55,3 +55,9 @@ warning =
 success : Int -> Element msg
 success =
     icon Icons.check_circle
+
+
+{-| -}
+logOut : Int -> Element msg
+logOut =
+    icon Icons.logout
