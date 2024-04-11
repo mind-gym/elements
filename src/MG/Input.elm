@@ -1,6 +1,7 @@
 module MG.Input exposing
-    ( enabledEmail, disabledEmail, password
+    ( enabledEmail, disabledEmail
     , primaryButton, secondaryButton
+    , currentPassword, newPassword
     )
 
 {-|
@@ -8,7 +9,7 @@ module MG.Input exposing
 
 # Input fields
 
-@docs enabledEmail, disabledEmail, password
+@docs enabledEmail, disabledEmail, newPassword, currentPassword
 
 
 # Controls
@@ -28,6 +29,7 @@ import MG.Colours exposing (colours)
 import MG.Icons as Icons
 import MG.Typography as Typography
 import MG.Viewport exposing (Viewport)
+import Material.Icons exposing (password)
 
 
 placeholder :
@@ -253,9 +255,12 @@ disabledEmail { value, enableMsg, viewport, isFocused } =
             Disabled
 
 
-{-| Common email field with animated placeholder and show/hide button.
--}
-password :
+type PasswordField
+    = New { note : Maybe String }
+    | Current
+
+
+type alias PasswordFieldParams msg =
     { onChange : String -> msg
     , value : String
     , showValue : Bool
@@ -264,49 +269,99 @@ password :
     , onSubmit : Maybe msg
     , isFocused : Bool
     }
+
+
+password :
+    PasswordField
+    -> PasswordFieldParams msg
     -> Element msg
-password { onChange, value, showValue, onSubmit, viewport, isFocused, togglePasswordVisibility } =
-    Input.currentPassword
-        ([ Border.color <|
-            if isFocused then
-                colours.green
+password passwordField { onChange, value, showValue, onSubmit, viewport, isFocused, togglePasswordVisibility } =
+    let
+        labelText =
+            case passwordField of
+                New _ ->
+                    "Set your password"
 
-            else
-                colours.black700
-         , placeholder
-            { viewport = viewport
-            , fieldIsFocused = isFocused
-            , fieldHasValue = not <| String.isEmpty value
-            , str = "Your password"
-            }
-         , inFront <|
-            Input.button
-                insetButtonStyles
-                { label =
-                    row [ spacing 6 ] <|
-                        if showValue then
-                            [ el [] <| text "Hide"
-                            , el [] <| Icons.hide 20
-                            ]
+                Current ->
+                    "Your password"
+    in
+    column
+        [ width fill
+        , spacing 10
+        ]
+        [ (case passwordField of
+            Current ->
+                Input.currentPassword
 
-                        else
-                            [ el [] <| text "Show"
-                            , el [] <| Icons.show 20
-                            ]
-                , onPress =
-                    Just <|
-                        togglePasswordVisibility <|
-                            not showValue
+            New _ ->
+                Input.newPassword
+          )
+            ([ Border.color <|
+                if isFocused then
+                    colours.green
+
+                else
+                    colours.black700
+             , placeholder
+                { viewport = viewport
+                , fieldIsFocused = isFocused
+                , fieldHasValue = not <| String.isEmpty value
+                , str = labelText
                 }
-         ]
-            ++ baseFieldAttrs onSubmit viewport
-        )
-        { label = Input.labelHidden "Your password"
-        , onChange = onChange
-        , placeholder = Nothing
-        , text = value
-        , show = showValue
-        }
+             , inFront <|
+                Input.button
+                    insetButtonStyles
+                    { label =
+                        row [ spacing 6 ] <|
+                            if showValue then
+                                [ el [] <| text "Hide"
+                                , el [] <| Icons.hide 20
+                                ]
+
+                            else
+                                [ el [] <| text "Show"
+                                , el [] <| Icons.show 20
+                                ]
+                    , onPress =
+                        Just <|
+                            togglePasswordVisibility <|
+                                not showValue
+                    }
+             ]
+                ++ baseFieldAttrs onSubmit viewport
+            )
+            { label = Input.labelHidden labelText
+            , onChange = onChange
+            , placeholder = Nothing
+            , text = value
+            , show = showValue
+            }
+        , case passwordField of
+            New { note } ->
+                case note of
+                    Just str ->
+                        paragraph [ width fill ]
+                            [ el (Font.color colours.white :: Typography.noteS.regular viewport) <|
+                                text str
+                            ]
+
+                    Nothing ->
+                        none
+
+            Current ->
+                none
+        ]
+
+{-| New password field with animated placeholder with optional note below the input field. -}
+newPassword : { note : Maybe String } -> PasswordFieldParams msg -> Element msg
+newPassword note =
+    password (New note)
+
+
+{-| Current password field with animated placeholder -}
+currentPassword : PasswordFieldParams msg -> Element msg
+currentPassword =
+    password Current
 
 
 type Button
