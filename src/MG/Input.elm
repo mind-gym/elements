@@ -1,7 +1,7 @@
 module MG.Input exposing
-    ( enabledEmail, disabledEmail
-    , primaryButton, secondaryButton
-    , currentPassword, newPassword
+    ( enabledEmail, disabledEmail, newPassword, currentPassword, plainEmailField
+    , primaryButton, secondaryButton, radioButton
+    , OptionParams, ratingScale
     )
 
 {-|
@@ -9,12 +9,17 @@ module MG.Input exposing
 
 # Input fields
 
-@docs enabledEmail, disabledEmail, newPassword, currentPassword
+@docs enabledEmail, disabledEmail, newPassword, currentPassword, plainEmailField
 
 
 # Controls
 
-@docs primaryButton, secondaryButton
+@docs primaryButton, secondaryButton, radioButton
+
+
+# Misc.
+
+@docs OptionParams, ratingScale
 
 -}
 
@@ -28,7 +33,7 @@ import MG.Attributes as Attributes
 import MG.Colours exposing (colours)
 import MG.Icons as Icons
 import MG.Typography as Typography
-import MG.Viewport exposing (Viewport)
+import MG.Viewport as Viewport exposing (Viewport)
 import Material.Icons exposing (password)
 
 
@@ -255,6 +260,22 @@ disabledEmail { value, enableMsg, viewport, isFocused } =
             Disabled
 
 
+{-| A plain white e-mail field with no animations
+-}
+plainEmailField : { onChange : String -> msg, value : String } -> Element msg
+plainEmailField { onChange, value } =
+    Input.email
+        [ Border.rounded 20
+        , padding 16
+        , Border.width 0
+        ]
+        { onChange = onChange
+        , text = value
+        , placeholder = Just <| Input.placeholder [] <| text "email@example.com"
+        , label = Input.labelHidden "Email address"
+        }
+
+
 type PasswordField
     = New { note : Maybe String }
     | Current
@@ -352,13 +373,16 @@ password passwordField { onChange, value, showValue, onSubmit, viewport, isFocus
                 none
         ]
 
-{-| New password field with animated placeholder with optional note below the input field. -}
+
+{-| New password field with animated placeholder with optional note below the input field.
+-}
 newPassword : { note : Maybe String } -> PasswordFieldParams msg -> Element msg
 newPassword note =
     password (New note)
 
 
-{-| Current password field with animated placeholder -}
+{-| Current password field with animated placeholder
+-}
 currentPassword : PasswordFieldParams msg -> Element msg
 currentPassword =
     password Current
@@ -442,3 +466,307 @@ primaryButton =
 secondaryButton : ButtonParams msg -> Element msg
 secondaryButton =
     button <| Secondary { transparent = False }
+
+
+{-| Needed for use with ratingScale
+-}
+type alias OptionParams ratingValue =
+    { rating : ratingValue
+    , name : Maybe String
+    , description : Maybe String
+    }
+
+
+largeViewportScaleBorderRadius : Int
+largeViewportScaleBorderRadius =
+    16
+
+
+ratingSelectedBorderColour : Color
+ratingSelectedBorderColour =
+    rgb255 0 227 184
+
+
+{-| A simple radio button
+-}
+radioButton : Input.OptionState -> Element msg
+radioButton state =
+    let
+        styles =
+            { border =
+                if state == Input.Selected then
+                    5
+
+                else
+                    1
+            , padding =
+                if state == Input.Selected then
+                    6
+
+                else
+                    10
+            }
+    in
+    el
+        [ paddingEach
+            { top = 0
+            , right = 2
+            , left = 16
+            , bottom = 0
+            }
+        ]
+    <|
+        el
+            [ Border.rounded 100
+            , Border.width styles.border
+            , padding styles.padding
+            ]
+        <|
+            none
+
+
+renderOption :
+    Viewport.Viewport
+    -> OptionParams ratingValue
+    -> Input.OptionState
+    -> Element msg
+renderOption viewport option state =
+    let
+        below1024 =
+            row
+                [ Attributes.transition
+                , width fill
+                , Background.color colours.white
+                , padding 16
+                , Border.rounded 8
+                , Border.width 2
+                , Border.color <|
+                    if state == Input.Selected then
+                        ratingSelectedBorderColour
+
+                    else
+                        colours.white
+                , spacing 10
+                , mouseOver
+                    [ scale <|
+                        if state == Input.Selected then
+                            1
+
+                        else
+                            1.02
+                    ]
+                ]
+                [ radioButton state
+                , column
+                    [ width fill
+                    , spacing 8
+                    ]
+                    [ el
+                        (Typography.headingXS viewport
+                            ++ [ Font.light ]
+                        )
+                      <|
+                        text <|
+                            Maybe.withDefault "" option.name
+                    , Element.paragraph
+                        (Typography.noteL.medium viewport
+                            ++ [ Font.color colours.black400
+                               , Font.light
+                               ]
+                        )
+                        [ text <| Maybe.withDefault "" option.description
+                        ]
+                    ]
+                ]
+
+        above1024 =
+            el
+                [ width fill
+                , Background.color colours.white
+                , Border.rounded largeViewportScaleBorderRadius
+                ]
+            <|
+                column
+                    [ width fill
+                    , padding 24
+                    , spacing 10
+                    , Attributes.transition
+                    , mouseOver
+                        [ scale <|
+                            if state == Input.Selected then
+                                1
+
+                            else
+                                1.1
+                        ]
+                    ]
+                    [ el
+                        [ centerX
+                        ]
+                      <|
+                        radioButton state
+                    , el
+                        (Typography.noteL.medium viewport
+                            ++ [ Font.light
+                               ]
+                        )
+                      <|
+                        text <|
+                            Maybe.withDefault "" option.name
+                    ]
+    in
+    case viewport.size of
+        Viewport.Default360 ->
+            below1024
+
+        Viewport.AtLeast768Wide ->
+            below1024
+
+        _ ->
+            above1024
+
+
+{-| A rating scale - can handle any type as a value. Vertically displayed on smaller viewports, and horizontally displayed on larger viewports.
+-}
+ratingScale :
+    { viewport : Viewport.Viewport
+    , options :
+        List (OptionParams ratingValue)
+    , selected :
+        Maybe (OptionParams ratingValue)
+    , onSelect : OptionParams ratingValue -> msg
+    }
+    -> Element msg
+ratingScale { options, viewport, onSelect, selected } =
+    let
+        optionsToRender =
+            options
+                |> List.map
+                    (\o ->
+                        Input.optionWith o (renderOption viewport o)
+                    )
+
+        requiresColumn =
+            case viewport.size of
+                Viewport.Default360 ->
+                    True
+
+                Viewport.AtLeast768Wide ->
+                    True
+
+                _ ->
+                    False
+
+        borderWidths =
+            { top = 2
+            , right = 2
+            , bottom = 2
+            , left = 2
+            }
+    in
+    column
+        [ width fill
+        ]
+        [ (if requiresColumn then
+            Input.radio
+
+           else
+            Input.radioRow
+          )
+            [ width fill
+            , if requiresColumn then
+                spacing 10
+
+              else
+                spaceEvenly
+            , Background.color <|
+                if requiresColumn then
+                    colours.bone
+
+                else
+                    colours.white
+            , Border.widthEach <|
+                if requiresColumn || selected == Nothing then
+                    borderWidths
+
+                else
+                    { borderWidths | bottom = 0 }
+            , Border.color <|
+                if requiresColumn then
+                    colours.bone
+
+                else
+                    case selected of
+                        Just _ ->
+                            ratingSelectedBorderColour
+
+                        Nothing ->
+                            colours.white
+            , if requiresColumn || selected == Nothing then
+                Border.rounded largeViewportScaleBorderRadius
+
+              else
+                Border.roundEach
+                    { topLeft = largeViewportScaleBorderRadius
+                    , topRight = largeViewportScaleBorderRadius
+                    , bottomLeft = 0
+                    , bottomRight = 0
+                    }
+            ]
+            { onChange = onSelect
+            , selected = selected
+            , options = optionsToRender
+            , label =
+                Input.labelHidden "Rating"
+            }
+        , case selected of
+            Nothing ->
+                none
+
+            Just selectedOption ->
+                if requiresColumn then
+                    none
+
+                else if selectedOption.description == Nothing then
+                    el
+                        [ width fill
+                        , Border.widthEach { borderWidths | top = 0 }
+                        , Border.roundEach
+                            { topLeft = 0
+                            , topRight = 0
+                            , bottomLeft = largeViewportScaleBorderRadius
+                            , bottomRight = largeViewportScaleBorderRadius
+                            }
+                        , height <| px largeViewportScaleBorderRadius
+                        , Background.color colours.white
+                        , Border.color ratingSelectedBorderColour
+                        ]
+                    <|
+                        none
+
+                else
+                    el
+                        (Typography.noteL.medium viewport
+                            ++ [ Font.light
+                               , width fill
+                               , Background.color colours.bone300
+                               , Border.roundEach
+                                    { topLeft = 0
+                                    , topRight = 0
+                                    , bottomLeft = largeViewportScaleBorderRadius
+                                    , bottomRight = largeViewportScaleBorderRadius
+                                    }
+                               , Border.widthEach
+                                    { top = 0
+                                    , right = 2
+                                    , bottom = 2
+                                    , left = 2
+                                    }
+                               , Border.color ratingSelectedBorderColour
+                               , padding 24
+                               ]
+                        )
+                    <|
+                        text <|
+                            Maybe.withDefault "" selectedOption.description
+        ]
