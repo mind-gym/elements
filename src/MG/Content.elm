@@ -1,5 +1,5 @@
 module MG.Content exposing
-    ( pageHeading, pageSubHeading, title, paragraph, titleAndTextContent
+    ( bulletList, pageHeading, pageSubHeading, paragraph, title, titleAndTextContent
     , progressBar
     )
 
@@ -8,7 +8,7 @@ module MG.Content exposing
 
 # Text Content
 
-@docs pageHeading, pageSubHeading, title, paragraph, titleAndTextContent
+@docs bulletList, pageHeading, pageSubHeading, paragraph, title, titleAndTextContent
 
 
 # Misc.
@@ -132,3 +132,53 @@ titleAndTextContent params =
             , paragraph = params.content
             }
         ]
+
+
+{-| A simple bullet list. `highlight` is an optional highlighted string to start the item, and `rest` is the rest of the item.
+-}
+bulletList :
+    { viewport : Viewport.Viewport
+    , contents :
+        List
+            { highlight :
+                Maybe String
+            , rest : Element msg
+            }
+    }
+    -> Element msg
+bulletList { contents, viewport } =
+    column
+        (width fill
+            :: Font.color colours.black600
+            :: Typography.leadS viewport
+        )
+        (contents
+            |> List.map
+                (\{ highlight, rest } ->
+                    row
+                        [ width fill
+                        , paddingXY 0 12
+                        ]
+                        [ el
+                            [ width <| px 28
+                            , alignTop
+                            ]
+                          <|
+                            text "•"
+                        , Element.paragraph
+                            [ width fill
+                            ]
+                            [ case highlight of
+                                Just str ->
+                                    el [ Font.bold ] <|
+                                        text <|
+                                            str
+                                                ++ " "
+
+                                Nothing ->
+                                    none
+                            , rest
+                            ]
+                        ]
+                )
+        )
