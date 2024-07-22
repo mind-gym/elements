@@ -82,19 +82,11 @@ chevronRight =
 
 {-| -}
 chevronDown : Int -> Element msg
-chevronDown size =
-    let
-        chevron =
-            chevronRight size
-    in
-    el [ rotate <| degrees 90 ] chevron
+chevronDown =
+    el [ rotate <| degrees 90 ] << chevronRight
 
 
 {-| -}
 chevronUp : Int -> Element msg
-chevronUp size =
-    let
-        chevron =
-            chevronRight size
-    in
-    el [ rotate <| degrees 270 ] chevron
+chevronUp =
+    el [ rotate <| degrees 270 ] << chevronRight
