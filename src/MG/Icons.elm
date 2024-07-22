@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus
+@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight
 
 -}
 
@@ -73,3 +73,21 @@ plus =
 cross : Int -> Element msg
 cross =
     icon Icons.close
+
+
+{-| -}
+chevronRight : Int -> Element msg
+chevronRight =
+    icon Icons.chevron_right
+
+
+{-| -}
+chevronDown : Int -> Element msg
+chevronDown =
+    el [ rotate <| degrees 90 ] << chevronRight
+
+
+{-| -}
+chevronUp : Int -> Element msg
+chevronUp =
+    el [ rotate <| degrees 270 ] << chevronRight
