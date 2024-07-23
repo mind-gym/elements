@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight
+@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse
 
 -}
 
@@ -91,3 +91,21 @@ chevronDown =
 chevronUp : Int -> Element msg
 chevronUp =
     el [ rotate <| degrees 270 ] << chevronRight
+
+
+{-| -}
+expand : Int -> Element msg
+expand size =
+    column []
+        [ chevronUp <| size // 2
+        , chevronDown <| size // 2
+        ]
+
+
+{-| -}
+collapse : Int -> Element msg
+collapse size =
+    column []
+        [ chevronDown <| size // 2
+        , chevronUp <| size // 2
+        ]
