@@ -93,5 +93,7 @@ buttonLink params =
             ]
         ]
         { url = params.url
-        , label = text params.text
+        , label =
+            paragraph [ width fill ]
+                [ text params.text ]
         }
