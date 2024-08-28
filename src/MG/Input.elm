@@ -605,14 +605,14 @@ renderOption viewport option state =
                         ]
                       <|
                         radioButton state
-                    , el
+                    , paragraph
                         (Typography.noteL.medium viewport
                             ++ [ Font.light
                                ]
                         )
-                      <|
-                        text <|
+                        [ text <|
                             Maybe.withDefault "" option.name
+                        ]
                     ]
     in
     case viewport.size of
