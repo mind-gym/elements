@@ -745,7 +745,7 @@ ratingScale { options, viewport, onSelect, selected } =
                         none
 
                 else
-                    el
+                    paragraph
                         (Typography.noteL.medium viewport
                             ++ [ Font.light
                                , width fill
@@ -766,7 +766,7 @@ ratingScale { options, viewport, onSelect, selected } =
                                , padding 24
                                ]
                         )
-                    <|
-                        text <|
+                        [ text <|
                             Maybe.withDefault "" selectedOption.description
+                        ]
         ]
