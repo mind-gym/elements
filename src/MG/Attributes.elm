@@ -2,6 +2,7 @@ module MG.Attributes exposing
     ( transition
     , testIdentifier
     , onEnter
+    , toolTip
     )
 
 {-|
@@ -20,6 +21,11 @@ module MG.Attributes exposing
 # Events
 
 @docs onEnter
+
+
+# Misc
+
+@docs toolTip
 
 -}
 
@@ -77,3 +83,10 @@ onEnter msg =
                     )
             )
         )
+
+
+{-| Add a tooltip to an element
+-}
+toolTip : String -> Attribute msg
+toolTip =
+    htmlAttribute << Attr.title
