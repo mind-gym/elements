@@ -160,7 +160,7 @@ email (EmailField { viewport, value, onSubmit, isFocused } emailType) =
                 [ width fill
                 , spacing 10
                 ]
-                [ Input.email
+                [ Input.username
                     (baseFieldAttrs onSubmit viewport
                         ++ specificStyles
                     )
