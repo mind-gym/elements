@@ -13,6 +13,7 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Html.Attributes as Attr
 import MG.Attributes as Attributes
 import MG.Colours exposing (colours)
 import MG.Icons as Icons
@@ -61,12 +62,25 @@ backLink =
 
 {-| An ordinary text link
 -}
-textLink : { text : String, url : String, testId : String } -> Element msg
+textLink :
+    { text : String
+    , url : String
+    , testId : String
+    , newTab : Bool
+    }
+    -> Element msg
 textLink params =
     Element.link
-        [ Font.color colours.green700
-        , Font.underline
-        ]
+        ([ Font.color colours.green700
+         , Font.underline
+         ]
+            ++ (if params.newTab then
+                    [ htmlAttribute <| Attr.target "_blank" ]
+
+                else
+                    []
+               )
+        )
         { url = params.url
         , label = text params.text
         }
