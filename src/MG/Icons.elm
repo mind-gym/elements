@@ -114,4 +114,4 @@ collapse size =
 {-| -}
 hamburger : Int -> Element msg
 hamburger =
-    icon Icons.visibility
+    icon Icons.menu
