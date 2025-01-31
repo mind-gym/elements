@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse
+@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger
 
 -}
 
@@ -109,3 +109,9 @@ collapse size =
         [ chevronDown <| size // 2
         , chevronUp <| size // 2
         ]
+
+
+{-| -}
+hamburger : Int -> Element msg
+hamburger =
+    icon Icons.visibility
