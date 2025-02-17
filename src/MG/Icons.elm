@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger, download)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger, download, search, assignment, diamond, arrowCircleRight, arrowCircleLeft)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger, download
+@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger, download, search, assignment, diamond, arrowCircleRight, arrowCircleLeft
 
 -}
 
@@ -121,3 +121,33 @@ hamburger =
 download : Int -> Element msg
 download =
     icon Icons.download
+
+
+{-| -}
+search : Int -> Element msg
+search =
+    icon Icons.search
+
+
+{-| -}
+assignment : Int -> Element msg
+assignment =
+    icon Icons.assignment
+
+
+{-| -}
+diamond : Int -> Element msg
+diamond =
+    icon Icons.diamond
+
+
+{-| -}
+arrowCircleRight : Int -> Element msg
+arrowCircleRight =
+    icon Icons.arrow_circle_right
+
+
+{-| -}
+arrowCircleLeft : Int -> Element msg
+arrowCircleLeft =
+    icon Icons.arrow_circle_left
