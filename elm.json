@@ -3,7 +3,7 @@
     "name": "mind-gym/elements",
     "summary": "A collection of Elm UI elements",
     "license": "BSD-3-Clause",
-    "version": "5.3.0",
+    "version": "5.4.0",
     "exposed-modules": [
         "MG.Colours",
         "MG.Viewport",
