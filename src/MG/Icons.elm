@@ -1,11 +1,11 @@
-module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger, download, search, assignment, diamond, arrowCircleRight, arrowCircleLeft)
+module MG.Icons exposing (show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, chevronLeft, expand, collapse, hamburger, download, search, assignment, diamond, arrowCircleRight, arrowCircleLeft)
 
 {-|
 
 
 # Icons
 
-@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, expand, collapse, hamburger, download, search, assignment, diamond, arrowCircleRight, arrowCircleLeft
+@docs show, hide, rightArrow, leftArrow, warning, success, logOut, cross, plus, chevronDown, chevronUp, chevronRight, chevronLeft, expand, collapse, hamburger, download, search, assignment, diamond, arrowCircleRight, arrowCircleLeft
 
 -}
 
@@ -79,6 +79,12 @@ cross =
 chevronRight : Int -> Element msg
 chevronRight =
     icon Icons.chevron_right
+
+
+{-| -}
+chevronLeft : Int -> Element msg
+chevronLeft =
+    icon Icons.chevron_left
 
 
 {-| -}
