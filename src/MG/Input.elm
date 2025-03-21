@@ -602,12 +602,16 @@ renderOption viewport option state =
                     ]
                     [ el
                         [ centerX
+                        , moveLeft 7
                         ]
                       <|
                         radioButton state
                     , el
                         (Typography.noteL.medium viewport
                             ++ [ Font.light
+                               , centerX
+                               , Font.center
+                               , width fill
                                ]
                         )
                       <|
